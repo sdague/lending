@@ -1,0 +1,112 @@
+<?php
+
+  /**
+   * @file
+   * Allows users to reserve and checkout nodes
+   *
+   */
+
+define('LEND_ACCESS','access lending library'); // lendee
+define('LEND_ADMIN','administer lending library'); // librarian
+
+  /**
+   * Implementation of hook_menu().
+   */
+function lending_menu() {
+  $items['admin/settings/lending'] = array(
+    'title' => 'Lending Library settings',
+    'description' => 'Change how lending behaves.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lending_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'lending.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * implementation of hook_perm()
+ */
+function lending_perm() {
+  return array(LEND_ACCESS, LEND_ADMIN);
+}
+
+
+/**
+* Implementation of hook_nodeapi().
+*/
+function lending_nodeapi(&$node, $op, $teaser, $page) {
+  global $user;
+
+  if (not_acceptable_user($user)) {
+    return;
+  }
+
+  if (not_acceptable_type($node)) {
+    return;
+  }
+
+  // page must be set otherwise this is a listing
+  if (!$page) {
+    return;
+  }
+
+  switch ($op) {
+    // The 'view' operation means the node is about to be displayed.
+    case 'view':
+      show_lending_panel(&$node);
+      break;
+  }
+}
+
+/**
+ * Determine that this isn't a valid user to use this function.
+ */
+
+function not_lender_or_librarian($user) {
+  return ($user->uid == 0);
+}
+
+function not_acceptable_type($node) {
+  $types_to_lend = variable_get('lending_node_types', array());
+
+  // Abort if this node is not one of the types we can lend
+  return !in_array($node->type, $types_to_lend);
+}
+
+function show_lending_panel(&$node) {
+  // show_current_lender
+  // show_lending_queue
+  // show_lending_form
+  show_lending_form(&$node);
+}
+
+function show_lending_form(&$node) {
+  $node->content['lending_form'] = array(
+    '#value' => drupal_get_form('lending_entry_form', $node),
+    '#weight' => 10
+  );
+}
+
+/**
+ * Define the form for entering an annotation.
+ */
+function lending_entry_form($form_state, $node) {
+  // Define a fieldset.
+  $form['lending'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Reservations'),
+  );
+  // For convenience, save the node ID.
+  $form['lending']['nid'] = array(
+    '#type' => 'value',
+    '#value' => $node->nid,
+  );
+  // Define a submit function.
+  $form['lending']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Request this Item'),
+  );
+  return $form;
+}
