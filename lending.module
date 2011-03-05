@@ -39,11 +39,11 @@ function lending_perm() {
 function lending_nodeapi(&$node, $op, $teaser, $page) {
   global $user;
 
-  if (not_user_or_admin($user)) {
+  if (lending_not_user_or_admin($user)) {
     return;
   }
 
-  if (not_acceptable_type($node)) {
+  if (lending_not_acceptable_type($node)) {
     return;
   }
 
@@ -55,7 +55,7 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
   switch ($op) {
     // The 'view' operation means the node is about to be displayed.
     case 'view':
-      show_lending_panel(&$node);
+      lending_show_lending_panel(&$node);
       break;
   }
 }
@@ -64,39 +64,83 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
  * Determine that this isn't a valid user to use this function.
  */
 
-function not_admin($user) {
-  return ! (user_access(LEND_ADMIN));
+function lending_not_admin($user) {
+  return ! (user_access(LEND_ADMIN, $user));
 }
 
-function not_user_or_admin($user) {
-  return ! (user_access(LEND_ACCESS) or user_access(LEND_ADMIN));
+function lending_not_user_or_admin($user) {
+  return ! (user_access(LEND_ACCESS, $user) or user_access(LEND_ADMIN, $user));
 }
 
-function not_acceptable_type($node) {
+function lending_not_acceptable_type($node) {
   $types_to_lend = variable_get('lending_node_types', array());
 
   // Abort if this node is not one of the types we can lend
   return !in_array($node->type, $types_to_lend);
 }
 
-function show_lending_panel(&$node) {
+function lending_show_lending_panel(&$node) {
   // show_current_lender
   // show_lending_queue
   // show_lending_form
-  show_lending_form(&$node);
+  lending_show_checkout_form(&$node);
+  lending_show_lending_form(&$node);
 }
 
-function show_lending_form(&$node) {
+function lending_show_checkout_form(&$node) {
+  if (! lending_is_checked_out($node->nid)) {
+    $node->content['lending_checkoutform'] = array(
+      '#value' => drupal_get_form('lending_checkoutform', $node),
+      '#weight' => 9
+    );
+  }
+}
+
+
+function lending_show_lending_form(&$node) {
   $node->content['lending_form'] = array(
-    '#value' => drupal_get_form('lending_entry_form', $node),
+    '#value' => drupal_get_form('lending_request_form', $node),
     '#weight' => 10
   );
 }
 
 /**
+ * Required checkout functions
+ *
+ *  Check out an item, check in an item,
+ *  Set up checkouts
+ *
+ */
+
+function lending_checkout_item($nid, $uid, $librarian) {
+  if (lending_is_checked_out($nid)) {
+    // ERROR
+    return;
+  }
+  return db_query("INSERT INTO {lending_checkouts} (nid, uid, created_lid, created_at) VALUES (%d, %d, %d, %d)", $nid, $uid, $librarian, time());
+
+}
+
+function lending_checkin_item($nid, $uid, $librarian) {
+  if (! lending_is_checked_out($nid)) {
+    // ERROR
+  }
+
+}
+
+function lending_checked_out_to($nid) {
+
+}
+
+function lending_is_checked_out($nid) {
+  $count = db_result(db_query("SELECT count(cid) from {lending_checkouts} where nid = %d and returned_at = 0", $nid));
+  return ($count > 0);
+}
+
+/**
  * Define the form for entering an annotation.
  */
-function lending_entry_form($form_state, $node) {
+function lending_request_form($form_state, $node) {
   // Define a fieldset.
   $form['lending'] = array(
     '#type' => 'fieldset',
@@ -107,10 +151,80 @@ function lending_entry_form($form_state, $node) {
     '#type' => 'value',
     '#value' => $node->nid,
   );
+
+  // For convenience, save the user ID.
+  $form['lending']['uid'] = array(
+    '#type' => 'value',
+    '#value' => $user->uid,
+  );
+
   // Define a submit function.
   $form['lending']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Request this Item'),
   );
   return $form;
+}
+
+
+/**
+ *  Checkout form
+ */
+
+function lending_checkoutform($form_state, $node) {
+  $form['user_name'] = array(
+    '#title' => t('User Name'),
+    '#type' => 'textfield',
+    '#description' => t('The user id to check out for'),
+    '#autocomplete_path' => 'user/autocomplete'
+  );
+  // For convenience, save the node ID.
+  $form['nid'] = array(
+    '#type' => 'value',
+    '#value' => $node->nid,
+  );
+
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit')
+  );
+
+  return $form;
+}
+
+function lending_checkoutform_validate($form, &$form_state) {
+  $params = array();
+  $params['name'] = $form_state['values']['user_name'];
+  $lendee = user_load($params);
+
+  if (! $lendee) {
+    form_set_error('user_name', t('User is not valid'));
+    return;
+  }
+
+  if ( lending_not_user_or_admin($lendee) ) {
+    form_set_error('user_name', t('User is not allowed to check out items'));
+  }
+
+  $form_state['values']['uid'] = $lendee->uid;
+
+  if ( lending_is_checked_out($form_state['values']['user_name']) ) {
+    form_set_error('submit', t('The item is checked out'));
+  }
+}
+
+function lending_checkoutform_submit($form_id, $form_state) {
+
+  $success = lending_checkout_item(
+    $form_state['values']['nid'],
+    $form_state['values']['uid'],
+    $user->uid
+  );
+
+  if ($success) {
+    drupal_set_message(t('Checkin completed'));
+  } else {
+    drupal_set_message(t('Checkin FAILED!'));
+  }
 }
