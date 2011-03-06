@@ -62,9 +62,9 @@ function lending_checkoutform_submit($form_id, $form_state) {
   );
 
   if ($success) {
-    drupal_set_message(t('Checkin completed'));
+    drupal_set_message(t('Checkout completed'));
   } else {
-    drupal_set_message(t('Checkin FAILED!'));
+    drupal_set_message(t('Checkout FAILED!'));
   }
 }
 

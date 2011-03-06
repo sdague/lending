@@ -27,24 +27,26 @@ function lending_checkout_item($nid, $uid, $librarian) {
 /**
  *
  */
-function lending_checkin_item($nid, $uid, $librarian) {
-  if (! lending_is_checked_out($nid)) {
-    // ERROR
-    return;
-  }
-  return db_query("UPDATE {lending_checkouts} set returned_at = %d, returned_lid = %d where nid = %d AND uid = %d AND returned_at = 0", time(), $librarian, $nid, $uid);
+function lending_checkin_item($cid, $librarian) {
+  return db_query("UPDATE {lending_checkouts} set returned_at = %d, returned_lid = %d where cid = %d", time(), $librarian, $cid);
 
 }
 
-function lending_checked_out_to($nid) {
+function lending_current_checkout($nid) {
+  $result = db_query("SELECT * from {lending_checkouts} where nid = %d and returned_at = 0", $nid);
+  if ($record = db_fetch_array($result)) {
+    return $record;
+  }
+  else {
+    return 0;
+  }
+}
 
-  drupal_set_message(t('Nid is: ') . $nid);
+function lending_current_checkout_user($nid) {
 
   $result = db_query("SELECT uid from {lending_checkouts} where nid = %d and returned_at = 0", $nid);
   if ($user = db_fetch_array($result)) {
-    drupal_set_message(t('User is: ') . $user['uid']);
     $u = user_load($user['uid']);
-    drupal_set_message(t('Loaded user: ') . print_r($u, TRUE));
     return $u;
   }
   else {

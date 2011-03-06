@@ -38,10 +38,13 @@ function lending_perm() {
 function lending_init() {
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-api.inc');
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-checkout.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/lending-current.inc');
 }
 
 /**
 * Implementation of hook_nodeapi().
+*
+* We display a form on items
 */
 function lending_nodeapi(&$node, $op, $teaser, $page) {
   global $user;
@@ -80,14 +83,6 @@ function lending_show_lending_panel(&$node) {
   lending_show_request_form(&$node);
 }
 
-function lending_show_current_lender(&$node) {
-  global $user;
-
-  $node->content['current_lender'] = array(
-    '#value' => theme('lending_user', lending_checked_out_to($node->nid)),
-    '#weight' => 8
-  );
-}
 
 function lending_show_request_form(&$node) {
   $node->content['lending_form'] = array(
@@ -148,14 +143,15 @@ function lending_theme() {
   return $themes;
 }
 
-function theme_lending_user($user) {
-  if (!$user) {
+function theme_lending_user($lendee) {
+  if (!$lendee) {
     return;
   }
 
   $output = '<div class="lending-current-lender">';
   $output .= 'Checked out by: ';
-  $output .= $user->profile_fullname;
+  $output .= $lendee->profile_fullname;
+
   $output .= '</div>';
 
   return $output;
