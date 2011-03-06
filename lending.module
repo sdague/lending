@@ -135,25 +135,16 @@ function lending_request_form($form_state, $node) {
  */
 
 function lending_theme() {
+  $path = drupal_get_path('module', 'lending');
+  $base = array(
+    'path' => "$path/theme"
+  );
+
   $themes = array(
-    'lending_user' => array(
-      'arguements' => array('user' => 0)
-    )
+    'lending_user' => $base + array(
+      'template' => 'lending-current-lender',
+      'arguments' => array('lendee' => NULL, 'checkout' => NULL)
+    ),
   );
   return $themes;
-}
-
-function theme_lending_user($lendee) {
-  if (!$lendee) {
-    return;
-  }
-
-  $output = '<div class="lending-current-lender">';
-  $output .= 'Checked out by: ';
-  $output .= $lendee->profile_fullname;
-
-  $output .= '</div>';
-
-  return $output;
-
 }

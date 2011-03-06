@@ -1,5 +1,12 @@
 <?php
 
+  /*****************************************************************************
+   *
+   *  Handle Checkouts.  This file does everything related to checkouts,
+   *  issolated to a single file to make it easier to understand the flow
+   *
+   */
+
 function lending_show_checkout_form(&$node) {
   if (! lending_is_checked_out($node->nid)) {
     $node->content['lending_checkoutform'] = array(

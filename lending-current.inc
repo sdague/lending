@@ -19,16 +19,9 @@ function lending_show_current_lender(&$node) {
   }
 
   $node->content['current_lender'] = array(
-    '#value' => theme('lending_user', user_load($checkout['uid'])),
+    '#value' => theme('lending_user', user_load($checkout['uid']), $checkout),
     '#weight' => 8
   );
-
-  if (lending_is_admin($user)) {
-    $node->content['checkin'] = array(
-      '#value' => drupal_get_form('lending_checkinform', $checkout),
-      '#weight' => 9
-    );
-  }
 
 }
 
@@ -50,7 +43,7 @@ function lending_checkinform($form_state, $checkout) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Item Returned')
+    '#value' => t('Return Item')
   );
 
   return $form;
