@@ -17,20 +17,25 @@ function lending_show_checkout_form(&$node) {
 }
 
 function lending_checkoutform($form_state, $node) {
-  $form['user_name'] = array(
+  $form['checkout'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Checkout this item for a member')
+  );
+
+  $form['checkout']['user_name'] = array(
     '#title' => t('User Name'),
     '#type' => 'textfield',
     '#description' => t('The user id to check out for'),
     '#autocomplete_path' => 'user/autocomplete'
   );
   // For convenience, save the node ID.
-  $form['nid'] = array(
+  $form['checkout']['nid'] = array(
     '#type' => 'value',
     '#value' => $node->nid,
   );
 
 
-  $form['submit'] = array(
+  $form['checkout']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit')
   );

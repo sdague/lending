@@ -15,11 +15,11 @@
 <div class="lending-current-lender">
     <table><tr><th>Current Lendee</th><th>Checked Out</th><th></th></tr>
     <tr>
-    <td><?php print $lendee->profile_fullname; ?></td>
-    <td><?php print $checkout['created_at'] ?></td>
+    <td><?php print lending_username($lendee); ?></td>
+    <td><?php print format_date($checkout['created_at']) ?></td>
     <?php if (lending_is_admin($user)) { ?>
       <td>
-                                                       <?php print drupal_get_form('lending_checkinform', $checkout); ?>
+        <?php print drupal_get_form('lending_checkinform', $checkout); ?>
       </td>
     <?php } ?>
     </tr>

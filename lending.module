@@ -39,6 +39,7 @@ function lending_init() {
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-api.inc');
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-checkout.inc');
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-current.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/lending-request.inc');
 }
 
 /**
@@ -82,53 +83,6 @@ function lending_show_lending_panel(&$node) {
   }
   lending_show_request_form(&$node);
 }
-
-
-function lending_show_request_form(&$node) {
-  $node->content['lending_form'] = array(
-    '#value' => drupal_get_form('lending_request_form', $node),
-    '#weight' => 10
-  );
-}
-
-/**
- * Required checkout functions
- *
- *  Check out an item, check in an item,
- *  Set up checkouts
- *
- */
-
-
-/**
- * Define the form for entering an annotation.
- */
-function lending_request_form($form_state, $node) {
-  // Define a fieldset.
-  $form['lending'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Reservations'),
-  );
-  // For convenience, save the node ID.
-  $form['lending']['nid'] = array(
-    '#type' => 'value',
-    '#value' => $node->nid,
-  );
-
-  // For convenience, save the user ID.
-  $form['lending']['uid'] = array(
-    '#type' => 'value',
-    '#value' => $user->uid,
-  );
-
-  // Define a submit function.
-  $form['lending']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Request this Item'),
-  );
-  return $form;
-}
-
 
 /**
  *  Checkout form
