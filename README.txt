@@ -14,3 +14,4 @@ checkouts easily there.
  * Make lending data accessible from views
  * Be able to convert a request to a checkout
  * Possible more mobile friendly version of checkouts
+ * Auto complete only the lendees

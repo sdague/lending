@@ -127,5 +127,5 @@ function lending_not_acceptable_type($node) {
   $types_to_lend = variable_get('lending_node_types', array());
 
   // Abort if this node is not one of the types we can lend
-  return !in_array($node->type, $types_to_lend);
+  return !$types_to_lend[$node->type];
 }
