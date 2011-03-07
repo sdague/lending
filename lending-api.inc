@@ -69,10 +69,10 @@ function lending_is_checked_out_by_user($nid, $uid) {
  *
  */
 
-function lending_request_queue($nid) {
-  $result = db_query("SELECT * from {lending_requests} where nid = %d and deleted_at = 0 and processed_at = 0", $nid);
+function lending_list_request_queue($nid) {
+  $requests = db_query("SELECT * from {lending_requests} where nid = %d and deleted_at = 0 and processed_at = 0", $nid);
   $rows = array();
-  while($row = db_fetch_array($result)) {
+  while($row = db_fetch_array($requests)) {
     $rows[] = $row;
   }
   return $rows;

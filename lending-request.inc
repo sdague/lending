@@ -4,11 +4,6 @@
 function lending_show_request_form(&$node) {
   global $user;
 
-  $node->content['request_queue'] = array(
-    '#value' => theme('lending_request_queue', $node),
-    '#weight' => 12
-  );
-
   if (lending_is_checked_out_by_user($node->nid, $user->uid)) {
     // can't reserve it if we already have it checked out
     return;

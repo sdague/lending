@@ -40,6 +40,7 @@ function lending_init() {
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-checkout.inc');
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-current.inc');
   require_once('./' . drupal_get_path('module', 'lending') . '/lending-request.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/lending-request-queue.inc');
 }
 
 /**
@@ -81,6 +82,7 @@ function lending_show_lending_panel(&$node) {
   if (lending_is_admin($user)) {
     lending_show_checkout_form(&$node);
   }
+  lending_show_request_queue(&$node);
   lending_show_request_form(&$node);
 }
 
@@ -98,6 +100,10 @@ function lending_theme() {
     'lending_user' => $base + array(
       'template' => 'lending-current-lender',
       'arguments' => array('lendee' => NULL, 'checkout' => NULL)
+    ),
+    'lending_request_queue' => $base + array(
+      'template' => 'lending-request-queue',
+      'arguments' => array('queue' => array(), 'node' => NULL, 'user' => NULL)
     ),
   );
   return $themes;
