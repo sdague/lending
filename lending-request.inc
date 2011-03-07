@@ -64,3 +64,36 @@ function lending_requestform_submit($form_id, $form_state) {
     drupal_set_message(t('Request FAILED!'));
   }
 }
+
+function lending_delete_requestform($form_state, $item) {
+  // For convenience, save the node ID.
+  $form['rid'] = array(
+    '#type' => 'hidden',
+    '#value' => $item['rid'],
+  );
+
+  // Define a submit function.
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Delete Request'),
+  );
+  return $form;
+}
+
+function lending_delete_requestform_submit($form_id, $form_state) {
+  // Having more than one of the same form on the same page seems to cause
+  // issues.  Actually track which button press came in.
+  $rid = $form_state['clicked_button']['#post']['rid'];
+
+  $success = lending_delete_request_by_rid($rid);
+
+  if ($success) {
+    drupal_set_message(t('Request completed'));
+  } else {
+    drupal_set_message(t('Request FAILED!'));
+  }
+}
+
+function lending_checkout_requestform($form_state, $item) {
+
+}

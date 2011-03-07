@@ -12,14 +12,24 @@
    */
 ?>
 <div class="lending-request-queue">
-  <table><tr><th>Requested by</th><th>Request Date</th><th></th></tr>
+  <table><tr><th>Requested by</th><th>Request Date</th><th></th><th></th></tr>
   <?php foreach($queue as $item): ?>
   <tr>
     <td><?php print lending_username(user_load($item['uid'])); ?></td>
     <td><?php print format_date($item['created_at']) ?></td>
     <?php if ($item['uid'] == $user->uid) {?>
-    <td>Delete Me</td>
+    <td>
+       <?php print drupal_get_form('lending_delete_requestform', $item); ?>
+    </td>
+    <?php } else if (lending_is_admin($user)) { ?>
+    <td>
+          <?php print drupal_get_form('lending_delete_requestform', $item); ?>
+    </td>
+    <td>
+        <?php print drupal_get_form('lending_checkout_requestform', $item); ?>
+    </td>
     <?php } ?>
+
     </tr>
     <?php endforeach; ?>
     </table>

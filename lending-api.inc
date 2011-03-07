@@ -86,6 +86,10 @@ function lending_delete_request($nid, $uid) {
   return db_query("UPDATE {lending_requests} set deleted_at = %d where nid = %d and uid = %d and deleted_at = 0", time(), $nid, $uid);
 }
 
+function lending_delete_request_by_rid($rid) {
+  return db_query("UPDATE {lending_requests} set deleted_at = %d where rid = %d", time(), $rid);
+}
+
 function lending_has_requested($nid, $uid) {
   $count = db_result(db_query("SELECT count(rid) from {lending_requests} where nid = %d and uid = %d and deleted_at = 0 and processed_at = 0", $nid, $uid));
   return ($count > 0);
