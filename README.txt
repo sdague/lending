@@ -9,3 +9,8 @@ checkouts easily there.
 == Permissions ==
 
 == Expected Workflow ==
+
+== Todo ==
+ * Make lending data accessible from views
+ * Be able to convert a request to a checkout
+ * Possible more mobile friendly version of checkouts
