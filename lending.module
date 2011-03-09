@@ -108,3 +108,13 @@ function lending_theme() {
   );
   return $themes;
 }
+
+/**
+ * Implementation of hook_views_api.
+ */
+function lending_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'lending') . '/includes',
+  );
+}
