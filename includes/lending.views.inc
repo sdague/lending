@@ -1,4 +1,4 @@
-<?php
+<?php // -*- drupal -*-
 
 /**
  * @file
@@ -11,8 +11,14 @@
  * Implementation of hook_views_data
  */
 function lending_views_data() {
+  $data;
+  _lending_define_checkouts(&$data);
+  _lending_define_requests(&$data);
 
-  drupal_set_message("Loaded lending views");
+  return $data;
+}
+
+function _lending_define_checkouts(&$data) {
 
   $data['lending_checkouts']['table']['group'] = t('Lending Checkouts');
 
@@ -22,7 +28,7 @@ function lending_views_data() {
   $data['lending_checkouts']['table']['base'] = array(
     'field' => 'cid',
     'title' => t('Lending Checkouts table'),
-    'help' => t("Example table contains example content and can be related to nodes."),
+    'help' => t("Checked out items"),
     'weight' => -12
   );
 
@@ -47,19 +53,6 @@ function lending_views_data() {
       'field' => 'returned_lid',
     ),
   );
-
-  // This table references the {node} table.
-  // This creates an 'implicit' relationship to the node table, so that when 'Node'
-  // is the base table, the fields are automatically available.
-  /* $data['lending_checkouts']['table']['join'] = array( */
-  /*   // Index this array by the table name to which this table refers. */
-  /*   // 'left_field' is the primary key in the referenced table. */
-  /*   // 'field' is the foreign key in this table. */
-  /*   'node' => array( */
-  /*     'left_field' => 'nid', */
-  /*     'field' => 'nid', */
-  /*   ), */
-  /* ); */
 
   // Next, describe each of the individual fields in this table to Views. For
   // each field, you may define what field, sort, argument, and/or filter
@@ -98,15 +91,86 @@ function lending_views_data() {
     $data,
     'lending_checkouts',
     'created_lid',
-    'Librarian Id ',
+    'Librarian Id (Checkout)',
     'Librarian that checked out this item',
     'users',
     'uid'
   );
 
+  _lending_define_view_reference(
+    $data,
+    'lending_checkouts',
+    'returned_lid',
+    'Librarian Id (Checkin) ',
+    'Librarian that checked in this item',
+    'users',
+    'uid'
+  );
 
-  return $data;
 }
+
+function _lending_define_requests(&$data) {
+
+  $data['lending_requests']['table']['group'] = t('Lending Requests');
+
+  // Define this as a base table. In reality this is not very useful for
+  // this table, as it isn't really a distinct object of its own, but
+  // it makes a good example.
+  $data['lending_requests']['table']['base'] = array(
+    'field' => 'rid',
+    'title' => t('Lending Requests table'),
+    'help' => t("Requests to lend out an item, user initiated"),
+    'weight' => -12
+  );
+
+  $data['lending_requests']['table']['join'] = array(
+    // Index this array by the table name to which this table refers.
+    // 'left_field' is the primary key in the referenced table.
+    // 'field' is the foreign key in this table.
+    'node' => array(
+      'left_field' => 'nid',
+      'field' => 'nid',
+    ),
+    'users' => array(
+      'left_field' => 'uid',
+      'field' => 'uid',
+    ),
+  );
+
+  // Next, describe each of the individual fields in this table to Views. For
+  // each field, you may define what field, sort, argument, and/or filter
+  // handlers it supports. This will determine where in the Views interface you
+  // may use the field.
+
+  // Node ID field.
+  _lending_define_view_number($data, 'lending_requests', 'rid', 'Request id', 'Unique id associated with the request');
+
+  _lending_define_view_date($data, 'lending_requests', 'created_at', 'Requested at', 'When the item was requested');
+
+  _lending_define_view_date($data, 'lending_requests', 'deleted_at', 'Deleted at', 'When the request was removed, may be user or librarian initiated');
+
+  _lending_define_view_reference(
+    $data,
+    'lending_requests',
+    'nid',
+    'Node Id',
+    'Node that was requested',
+    'node',
+    'nid'
+  );
+
+  _lending_define_view_reference(
+    $data,
+    'lending_requests',
+    'uid',
+    'User Id',
+    'User that requested this item',
+    'users',
+    'uid'
+  );
+
+}
+
 
 
 function _lending_define_view_date(&$data, $table, $column, $title, $help = '') {
