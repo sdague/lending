@@ -1,15 +1,15 @@
 <?php // -*- drupal -*-
 
-/**
- * @file
- *
- * Provide views access into the checkouts data
- *
- */
+  /**
+   * @file
+   *
+   * Provide views access into the checkouts data
+   *
+   */
 
-/**
- * Implementation of hook_views_data
- */
+  /**
+   * Implementation of hook_views_data
+   */
 function lending_views_data() {
   $data;
   _lending_define_checkouts(&$data);
@@ -182,7 +182,7 @@ function _lending_define_view_date(&$data, $table, $column, $title, $help = '') 
       'field' => $column, // the real field
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
-     ),
+    ),
     'filter' => array('handler' => 'views_handler_filter_string_compare'),
     // Amazon date is sortable, so we can just use the standard handler.
     'sort' => array('handler' => 'views_handler_sort'),
@@ -190,7 +190,7 @@ function _lending_define_view_date(&$data, $table, $column, $title, $help = '') 
 }
 
 function _lending_define_view_reference(&$data, $table, $column, $title, $help, $base, $field) {
-    $data[$table][$column] = array(
+  $data[$table][$column] = array(
     'title' => $title, // The item it appears as on the UI,
     'help' => $help, // The help that appears on the UI,
     'field' => array(
@@ -232,6 +232,7 @@ function _lending_define_view_number(&$data, $table, $column, $title, $help) {
  *
  *  Base views.  These are huge, so I hope I can get them into another file.
  *
+ *  These are built in the qeury building and exported out with minor tweaks.
  */
 
 function lending_views_default_views() {
@@ -548,6 +549,325 @@ function lending_views_default_views() {
     ));
 
   // Add view to list of views to provide.
+  $views[$view->name] = $view;
+
+  // The requests view
+  $view = new view;
+  $view->name = 'lending_requests';
+  $view->description = '';
+  $view->tag = '';
+  $view->view_php = '';
+  $view->base_table = 'node';
+  $view->is_cacheable = FALSE;
+  $view->api_version = 2;
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+  $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+      'uid' => array(
+        'id' => 'uid',
+        'table' => 'lending_requests',
+        'field' => 'uid',
+      ),
+    ));
+  $handler->override_option('fields', array(
+      'title' => array(
+        'label' => 'Title',
+        'alter' => array(
+          'alter_text' => 0,
+          'text' => '',
+          'make_link' => 0,
+          'path' => '',
+          'link_class' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'target' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+          'strip_tags' => 0,
+        ),
+        'empty' => '',
+        'hide_empty' => 0,
+        'empty_zero' => 0,
+        'link_to_node' => 1,
+        'exclude' => 0,
+        'id' => 'title',
+        'table' => 'node',
+        'field' => 'title',
+        'relationship' => 'none',
+        'override' => array(
+          'button' => 'Override',
+        ),
+      ),
+      'type' => array(
+        'label' => 'Type',
+        'alter' => array(
+          'alter_text' => 0,
+          'text' => '',
+          'make_link' => 0,
+          'path' => '',
+          'link_class' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'target' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+          'strip_tags' => 0,
+        ),
+        'empty' => '',
+        'hide_empty' => 0,
+        'empty_zero' => 0,
+        'link_to_node' => 0,
+        'machine_name' => 0,
+        'exclude' => 0,
+        'id' => 'type',
+        'table' => 'node',
+        'field' => 'type',
+        'relationship' => 'none',
+      ),
+      'value' => array(
+        'label' => 'Requested by',
+        'alter' => array(
+          'alter_text' => 0,
+          'text' => '',
+          'make_link' => 0,
+          'path' => '',
+          'link_class' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'target' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+          'strip_tags' => 0,
+        ),
+        'empty' => '',
+        'hide_empty' => 0,
+        'empty_zero' => 0,
+        'link_to_user' => 1,
+        'exclude' => 0,
+        'id' => 'value',
+        'table' => 'profile_values_profile_fullname',
+        'field' => 'value',
+        'relationship' => 'uid',
+      ),
+      'name' => array(
+        'label' => 'Name',
+        'alter' => array(
+          'alter_text' => 1,
+          'text' => ' ( [name] )',
+          'make_link' => 0,
+          'path' => '',
+          'link_class' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'target' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+          'strip_tags' => 0,
+        ),
+        'empty' => '',
+        'hide_empty' => 0,
+        'empty_zero' => 0,
+        'link_to_user' => 1,
+        'overwrite_anonymous' => 0,
+        'anonymous_text' => '',
+        'exclude' => 0,
+        'id' => 'name',
+        'table' => 'users',
+        'field' => 'name',
+        'relationship' => 'uid',
+      ),
+      'rid' => array(
+        'label' => 'Request id',
+        'alter' => array(
+          'alter_text' => 0,
+          'text' => '',
+          'make_link' => 0,
+          'path' => '',
+          'link_class' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'target' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+          'strip_tags' => 0,
+        ),
+        'empty' => '',
+        'hide_empty' => 0,
+        'empty_zero' => 0,
+        'set_precision' => FALSE,
+        'precision' => 0,
+        'decimal' => '.',
+        'separator' => ',',
+        'prefix' => '',
+        'suffix' => '',
+        'exclude' => 1,
+        'id' => 'rid',
+        'table' => 'lending_requests',
+        'field' => 'rid',
+        'relationship' => 'none',
+      ),
+      'created_at' => array(
+        'label' => 'Requested on',
+        'alter' => array(
+          'alter_text' => 0,
+          'text' => '',
+          'make_link' => 0,
+          'path' => '',
+          'link_class' => '',
+          'alt' => '',
+          'prefix' => '',
+          'suffix' => '',
+          'target' => '',
+          'help' => '',
+          'trim' => 0,
+          'max_length' => '',
+          'word_boundary' => 1,
+          'ellipsis' => 1,
+          'html' => 0,
+          'strip_tags' => 0,
+        ),
+        'empty' => '',
+        'hide_empty' => 0,
+        'empty_zero' => 0,
+        'date_format' => 'custom',
+        'custom_date_format' => 'M jS, Y',
+        'exclude' => 0,
+        'id' => 'created_at',
+        'table' => 'lending_requests',
+        'field' => 'created_at',
+        'relationship' => 'none',
+      ),
+    ));
+  $handler->override_option('sorts', array(
+      'title' => array(
+        'order' => 'ASC',
+        'id' => 'title',
+        'table' => 'node',
+        'field' => 'title',
+        'relationship' => 'none',
+      ),
+      'created_at' => array(
+        'order' => 'ASC',
+        'id' => 'created_at',
+        'table' => 'lending_requests',
+        'field' => 'created_at',
+        'relationship' => 'none',
+      ),
+    ));
+  $handler->override_option('filters', array(
+      'deleted_at' => array(
+        'operator' => '=',
+        'value' => '0',
+        'group' => '0',
+        'exposed' => FALSE,
+        'expose' => array(
+          'operator' => FALSE,
+          'label' => '',
+        ),
+        'case' => 1,
+        'id' => 'deleted_at',
+        'table' => 'lending_requests',
+        'field' => 'deleted_at',
+        'relationship' => 'none',
+      ),
+    ));
+  $handler->override_option('access', array(
+      'type' => 'perm',
+      'perm' => 'access lending library',
+    ));
+  $handler->override_option('cache', array(
+      'type' => 'none',
+    ));
+  $handler->override_option('header', '<h1>Currently Requested Items</h1>');
+  $handler->override_option('header_format', '2');
+  $handler->override_option('header_empty', 0);
+  $handler->override_option('items_per_page', 30);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('distinct', 0);
+  $handler->override_option('style_plugin', 'table');
+  $handler->override_option('style_options', array(
+      'grouping' => '',
+      'override' => 1,
+      'sticky' => 0,
+      'order' => 'asc',
+      'columns' => array(
+        'title' => 'title',
+        'type' => 'type',
+        'cid' => 'cid',
+        'value' => 'value',
+        'name' => 'value',
+        'created_at' => 'created_at',
+      ),
+      'info' => array(
+        'title' => array(
+          'sortable' => 0,
+          'separator' => '',
+        ),
+        'type' => array(
+          'sortable' => 0,
+          'separator' => '',
+        ),
+        'cid' => array(
+          'sortable' => 0,
+          'separator' => '',
+        ),
+        'value' => array(
+          'sortable' => 0,
+          'separator' => '',
+        ),
+        'name' => array(
+          'sortable' => 0,
+          'separator' => '',
+        ),
+        'created_at' => array(
+          'sortable' => 0,
+          'separator' => '',
+        ),
+      ),
+      'default' => '-1',
+    ));
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->override_option('path', 'lending/requests');
+  $handler->override_option('menu', array(
+      'type' => 'none',
+      'title' => '',
+      'description' => '',
+      'weight' => 0,
+      'name' => 'navigation',
+    ));
+  $handler->override_option('tab_options', array(
+      'type' => 'none',
+      'title' => '',
+      'description' => '',
+      'weight' => 0,
+      'name' => 'navigation',
+    ));
+
   $views[$view->name] = $view;
 
   // ...Repeat all of the above for each view the module should provide.
