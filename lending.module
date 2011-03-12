@@ -18,7 +18,7 @@ function lending_menu() {
     'page arguments' => array('lending_admin_settings'),
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
-    'file' => 'lending.admin.inc',
+    'file' => 'includes/lending.admin.inc',
   );
   return $items;
 }
@@ -36,11 +36,11 @@ function lending_perm() {
  */
 
 function lending_init() {
-  require_once('./' . drupal_get_path('module', 'lending') . '/lending-api.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/lending-checkout.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/lending-current.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/lending-request.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/lending-request-queue.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.api.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.checkout.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.current.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.request.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.request-queue.inc');
 }
 
 /**
