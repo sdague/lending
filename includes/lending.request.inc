@@ -1,4 +1,11 @@
-<?php
+<?php // -*- drupal -*-
+
+/**
+ * @file
+ * All the functions related to both the request form as well as the request
+ * delete button.
+ *
+ */
 
 
 function lending_show_request_form(&$node) {

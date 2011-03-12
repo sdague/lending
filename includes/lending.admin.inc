@@ -1,4 +1,4 @@
-<?php
+<?php // -*- drupal -*-
   /**
    * @file
    * Administration page callbacks for the lending module.

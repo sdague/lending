@@ -1,11 +1,11 @@
-<?php
+<?php // -*- drupal -*-
 
-  /*****************************************************************************
-   *
-   *  Handle Checkouts.  This file does everything related to checkouts,
-   *  issolated to a single file to make it easier to understand the flow
-   *
-   */
+/**
+ * @file
+ * Everything to deal with the actual checkout form.  This includes
+ * the display of the checkout form as well as the validation and
+ * submission of it.
+ */
 
 function lending_show_checkout_form(&$node) {
   if (! lending_is_checked_out($node->nid)) {

@@ -1,7 +1,7 @@
-<?php
+<?php // -*- drupal -*-
 
-/******************************************************
- *
+/**
+ * @file
  *  Lending API
  *
  *  The following functions are the ways we interact with the
@@ -9,11 +9,23 @@
  *  should call functions in this file and not embed SQL directly.
  */
 
+/**
+ * symbolic permissions used in lending
+ */
 define('LEND_ACCESS','access lending library'); // lendee
 define('LEND_ADMIN','administer lending library'); // librarian
 
 /**
+ * lending_checkout_item: checks an item out of the database
  *
+ * @param $nid
+ *      The node id of the item to be checked out
+ * @param $uid
+ *      The user id to checkout the item to
+ * @param $librarian
+ *      The user id of the person performing the checkout for audit reasons
+ *
+ * @return the success of the query
  */
 function lending_checkout_item($nid, $uid, $librarian) {
   if (lending_is_checked_out($nid)) {
@@ -24,9 +36,8 @@ function lending_checkout_item($nid, $uid, $librarian) {
 
 }
 
-/**
- *
- */
+
+
 function lending_checkin_item($cid, $librarian) {
   return db_query("UPDATE {lending_checkouts} set returned_at = %d, returned_lid = %d where cid = %d", time(), $librarian, $cid);
 

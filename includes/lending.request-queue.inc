@@ -1,5 +1,9 @@
-<?php
+<?php // -*- drupal -*-
 
+/**
+ * @file
+ * Functions related to display of the lending request queue
+ */
 
 function lending_show_request_queue(&$node) {
   global $user;

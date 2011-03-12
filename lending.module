@@ -2,7 +2,11 @@
 
   /**
    * @file
-   * Allows users to reserve and checkout nodes
+   * This module is designed to provide a simple lending interface for
+   * checking out or requesting nodes.
+   *
+   * @note
+   * The README.txt in the module contains a sample workflow.
    *
    */
 
@@ -32,7 +36,17 @@ function lending_perm() {
 
 
 /**
- * Implementation of hook_init() to seperate out code into logical files
+ * Implementation of hook_init() to seperate out code into logical files for
+ * each type of function.
+ *
+ *  * lending.api.inc - the database interfaces for the two types as well as
+ *    permissions
+ *  * lending.checkout.inc - the form to do a checkout, and all the logic for
+ *    form submission
+ *  * lending.current.inc - the code to display the currently lendee
+ *  * lending.request.inc - the code to handle user requests
+ *  * lending.request-queue.inc - functions handling display of all the
+ *    request for an item that are outstanding
  */
 
 function lending_init() {
@@ -46,7 +60,8 @@ function lending_init() {
 /**
 * Implementation of hook_nodeapi().
 *
-* We display a form on items
+* All the user visible portions of the display are on the nodes for the
+* lendable content.
 */
 function lending_nodeapi(&$node, $op, $teaser, $page) {
   global $user;
@@ -59,7 +74,9 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
     return;
   }
 
-  // page must be set otherwise this is a listing
+  // we only opperate in page context, so don't display otherwise.
+  //
+  // TODO: perhaps there is value in displaying in a non page context
   if (!$page) {
     return;
   }
@@ -69,14 +86,14 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
     case 'view':
       lending_show_lending_panel(&$node);
       break;
+      // TODO: handle delete case
   }
 }
 
-
+/**
+ * all the functions here are in include files
+ */
 function lending_show_lending_panel(&$node) {
-  // show_current_lender
-  // show_lending_queue
-  // show_lending_form
   lending_show_current_lender(&$node);
 
   if (lending_is_admin($user)) {
@@ -87,15 +104,16 @@ function lending_show_lending_panel(&$node) {
 }
 
 /**
- *  Checkout form
+ *  Implementation of hook_theme().
  */
-
 function lending_theme() {
   $path = drupal_get_path('module', 'lending');
   $base = array(
     'path' => "$path/theme"
   );
 
+  // TODO: get forms in here as well, though I was having an issue getting
+  // them to take parameters as well as the form parameters
   $themes = array(
     'lending_user' => $base + array(
       'template' => 'lending-current-lender',
@@ -110,7 +128,7 @@ function lending_theme() {
 }
 
 /**
- * Implementation of hook_views_api.
+ * Implementation of hook_views_api().
  */
 function lending_views_api() {
   return array(

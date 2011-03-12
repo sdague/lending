@@ -1,7 +1,7 @@
-<?php
+<?php // -*- drupal -*-
 
-/********************************************************************
- *
+/**
+ * @file
  *  Current Lender
  *
  *  This file covers all the functionality of the current lender line
