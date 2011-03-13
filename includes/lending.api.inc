@@ -74,6 +74,10 @@ function lending_is_checked_out_by_user($nid, $uid) {
   return ($count > 0);
 }
 
+function lending_delete_checkouts_by_nid($nid) {
+  return db_query("DELETE from {lending_checkouts} where nid = %d", $nid);
+}
+
 /*******************************************************************
  *
  *  Request functions
@@ -104,6 +108,10 @@ function lending_delete_request_by_rid($rid) {
 function lending_has_requested($nid, $uid) {
   $count = db_result(db_query("SELECT count(rid) from {lending_requests} where nid = %d and uid = %d and deleted_at = 0 and processed_at = 0", $nid, $uid));
   return ($count > 0);
+}
+
+function lending_delete_requests_by_nid($nid) {
+  return db_query("DELETE from {lending_requests} where nid = %d", $nid);
 }
 
 

@@ -15,7 +15,7 @@
    * Implementation of hook_menu().
    */
 function lending_menu() {
-  $items['admin/settings/lending'] = array(
+  $items['admin/lending/settings'] = array(
     'title' => 'Lending Library settings',
     'description' => 'Change how lending behaves.',
     'page callback' => 'drupal_get_form',
@@ -66,27 +66,28 @@ function lending_init() {
 function lending_nodeapi(&$node, $op, $teaser, $page) {
   global $user;
 
-  if (lending_not_user_or_admin($user)) {
+  if ($op == 'delete') {
+    lending_cleanup_records(&$node);
     return;
   }
 
-  if (lending_not_acceptable_type($node)) {
-    return;
-  }
+  if ($op == 'view') {
+    if (lending_not_user_or_admin($user)) {
+      return;
+    }
 
-  // we only opperate in page context, so don't display otherwise.
-  //
-  // TODO: perhaps there is value in displaying in a non page context
-  if (!$page) {
-    return;
-  }
+    if (lending_not_acceptable_type($node)) {
+      return;
+    }
 
-  switch ($op) {
-    // The 'view' operation means the node is about to be displayed.
-    case 'view':
-      lending_show_lending_panel(&$node);
-      break;
-      // TODO: handle delete case
+    // we only opperate in page context, so don't display otherwise.
+    //
+    // TODO: perhaps there is value in displaying in a non page context
+    if (!$page) {
+      return;
+    }
+
+    lending_show_lending_panel(&$node);
   }
 }
 
@@ -101,6 +102,14 @@ function lending_show_lending_panel(&$node) {
   }
   lending_show_request_queue(&$node);
   lending_show_request_form(&$node);
+}
+
+/**
+ *
+ */
+function lending_cleanup_records(&$node) {
+  lending_delete_requests_by_nid($node->nid);
+  lending_delete_checkouts_by_nid($node->nid);
 }
 
 /**
