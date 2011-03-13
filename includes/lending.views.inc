@@ -22,15 +22,15 @@ function _lending_define_checkouts(&$data) {
 
   $data['lending_checkouts']['table']['group'] = t('Lending Checkouts');
 
-  // Define this as a base table. In reality this is not very useful for
-  // this table, as it isn't really a distinct object of its own, but
-  // it makes a good example.
-  $data['lending_checkouts']['table']['base'] = array(
-    'field' => 'cid',
-    'title' => t('Lending Checkouts table'),
-    'help' => t("Checked out items"),
-    'weight' => -12
-  );
+  /* // Define this as a base table. In reality this is not very useful for */
+  /* // this table, as it isn't really a distinct object of its own, but */
+  /* // it makes a good example. */
+  /* $data['lending_checkouts']['table']['base'] = array( */
+  /*   'field' => 'cid', */
+  /*   'title' => t('Lending Checkouts table'), */
+  /*   'help' => t("Checked out items"), */
+  /*   'weight' => -12 */
+  /* ); */
 
   $data['lending_checkouts']['table']['join'] = array(
     // Index this array by the table name to which this table refers.
@@ -113,15 +113,15 @@ function _lending_define_requests(&$data) {
 
   $data['lending_requests']['table']['group'] = t('Lending Requests');
 
-  // Define this as a base table. In reality this is not very useful for
-  // this table, as it isn't really a distinct object of its own, but
-  // it makes a good example.
-  $data['lending_requests']['table']['base'] = array(
-    'field' => 'rid',
-    'title' => t('Lending Requests table'),
-    'help' => t("Requests to lend out an item, user initiated"),
-    'weight' => -12
-  );
+  /* // Define this as a base table. In reality this is not very useful for */
+  /* // this table, as it isn't really a distinct object of its own, but */
+  /* // it makes a good example. */
+  /* $data['lending_requests']['table']['base'] = array( */
+  /*   'field' => 'rid', */
+  /*   'title' => t('Lending Requests table'), */
+  /*   'help' => t("Requests to lend out an item, user initiated"), */
+  /*   'weight' => -12 */
+  /* ); */
 
   $data['lending_requests']['table']['join'] = array(
     // Index this array by the table name to which this table refers.
