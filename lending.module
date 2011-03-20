@@ -81,8 +81,6 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
     }
 
     // we only opperate in page context, so don't display otherwise.
-    //
-    // TODO: perhaps there is value in displaying in a non page context
     if (!$page) {
       return;
     }
