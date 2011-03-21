@@ -12,7 +12,7 @@
 
 
   /**
-   * Implementation of hook_menu().
+   * Implements hook_menu().
    */
 function lending_menu() {
   $items['admin/lending/settings'] = array(
@@ -28,37 +28,14 @@ function lending_menu() {
 }
 
 /**
- * implementation of hook_perm()
+ * Implements hook_perm().
  */
 function lending_perm() {
   return array(LEND_ACCESS, LEND_ADMIN);
 }
 
-
 /**
- * Implementation of hook_init() to seperate out code into logical files for
- * each type of function.
- *
- *  * lending.api.inc - the database interfaces for the two types as well as
- *    permissions
- *  * lending.checkout.inc - the form to do a checkout, and all the logic for
- *    form submission
- *  * lending.current.inc - the code to display the currently lendee
- *  * lending.request.inc - the code to handle user requests
- *  * lending.request-queue.inc - functions handling display of all the
- *    request for an item that are outstanding
- */
-
-function lending_init() {
-  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.api.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.checkout.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.current.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.request.inc');
-  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.request-queue.inc');
-}
-
-/**
-* Implementation of hook_nodeapi().
+* Implements hook_nodeapi().
 *
 * All the user visible portions of the display are on the nodes for the
 * lendable content.
@@ -67,11 +44,14 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
   global $user;
 
   if ($op == 'delete') {
+    _lending_load_api();
     lending_cleanup_records(&$node);
     return;
   }
 
   if ($op == 'view') {
+    _lending_load_api();
+
     if (lending_not_user_or_admin($user)) {
       return;
     }
@@ -80,17 +60,35 @@ function lending_nodeapi(&$node, $op, $teaser, $page) {
       return;
     }
 
-    // we only opperate in page context, so don't display otherwise.
+    // We only opperate in page context, so don't display otherwise.
     if (!$page) {
       return;
     }
 
+    _lending_load_all();
     lending_show_lending_panel(&$node);
   }
 }
 
 /**
- * all the functions here are in include files
+ * Load API calls, which gives us access to DB and permissions checks
+ */
+function _lending_load_api() {
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.api.inc');
+}
+
+/**
+ * Loads the rest of the files needed for form procressing in the lending workflow.
+ */
+function _lending_load_all() {
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.checkout.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.current.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.request.inc');
+  require_once('./' . drupal_get_path('module', 'lending') . '/includes/lending.request-queue.inc');
+}
+
+/**
+ * All the functions here are in include files
  */
 function lending_show_lending_panel(&$node) {
   lending_show_current_lender(&$node);
@@ -103,7 +101,7 @@ function lending_show_lending_panel(&$node) {
 }
 
 /**
- *
+ * Remove all records associated with a node on node removal
  */
 function lending_cleanup_records(&$node) {
   lending_delete_requests_by_nid($node->nid);
@@ -111,7 +109,7 @@ function lending_cleanup_records(&$node) {
 }
 
 /**
- *  Implementation of hook_theme().
+ *  Implements hook_theme().
  */
 function lending_theme() {
   $path = drupal_get_path('module', 'lending');
@@ -135,7 +133,7 @@ function lending_theme() {
 }
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function lending_views_api() {
   return array(

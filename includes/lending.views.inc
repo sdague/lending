@@ -8,7 +8,7 @@
    */
 
   /**
-   * Implementation of hook_views_data
+   * Implements hook_views_data().
    */
 function lending_views_data() {
   $data;
@@ -229,6 +229,8 @@ function _lending_define_view_number(&$data, $table, $column, $title, $help) {
 
 
 /***********************************************************************
+ *
+ * Implements hook_views_default_views().
  *
  *  Base views.  These are huge, so I hope I can get them into another file.
  *
