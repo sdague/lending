@@ -10,12 +10,6 @@
  */
 
 /**
- * symbolic permissions used in lending
- */
-define('LEND_ACCESS','access lending library'); // lendee
-define('LEND_ADMIN','administer lending library'); // librarian
-
-/**
  * lending_checkout_item: checks an item out of the database
  *
  * @param $nid
@@ -120,19 +114,19 @@ function lending_delete_requests_by_nid($nid) {
  */
 
 function lending_not_admin($user) {
-  return ! (user_access(LEND_ADMIN, $user));
+  return ! (user_access("administer lending library", $user));
 }
 
 function lending_is_admin($user) {
-  return (user_access(LEND_ADMIN, $user));
+  return (user_access("administer lending library", $user));
 }
 
 function lending_is_user_or_admin($user) {
-  return (user_access(LEND_ACCESS, $user) or user_access(LEND_ADMIN, $user));
+  return (user_access("access lending library", $user) or user_access("administer lending library", $user));
 }
 
 function lending_not_user_or_admin($user) {
-  return ! (user_access(LEND_ACCESS, $user) or user_access(LEND_ADMIN, $user));
+  return ! (user_access("access lending library", $user) or user_access("administer lending library", $user));
 }
 
 function lending_username($user) {

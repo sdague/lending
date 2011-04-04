@@ -31,7 +31,7 @@ function lending_menu() {
  * Implements hook_perm().
  */
 function lending_perm() {
-  return array(LEND_ACCESS, LEND_ADMIN);
+  return array("access lending library", "administer lending library");
 }
 
 /**
