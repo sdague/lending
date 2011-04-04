@@ -20,7 +20,7 @@ function lending_show_request_queue(&$node) {
 /**
  * Define the form for entering an annotation.
  */
-function lending_requestremoveform($form_state, $node) {
+function lending_request_remove_form($form_state, $node) {
   // Define a fieldset.
   $form['lending'] = array(
     '#type' => 'fieldset',
@@ -40,7 +40,7 @@ function lending_requestremoveform($form_state, $node) {
   return $form;
 }
 
-function lending_requestremoveform_validate($form, &$form_state) {
+function lending_request_remove_form_validate($form, &$form_state) {
   global $user;
   if ( lending_not_user_or_admin($user) ) {
     form_set_error('submit', t('User is not allowed to check out items'));
@@ -49,7 +49,7 @@ function lending_requestremoveform_validate($form, &$form_state) {
   $form_state['values']['uid'] = $user->uid;
 }
 
-function lending_requestremoveform_submit($form_id, $form_state) {
+function lending_request_remove_form_submit($form_id, $form_state) {
   $success = lending_request_item(
     $form_state['values']['nid'],
     $form_state['values']['uid']

@@ -15,7 +15,7 @@
    * Implements hook_menu().
    */
 function lending_menu() {
-  $items['admin/lending/settings'] = array(
+  $items['admin/settings/lending'] = array(
     'title' => 'Lending Library settings',
     'description' => 'Change how lending behaves.',
     'page callback' => 'drupal_get_form',
